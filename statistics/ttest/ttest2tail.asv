@@ -1,0 +1,66 @@
+function [h, p] = ttest2tail(a, b, sigLevel)
+% n = zeroCross(x)
+% 2 tailed t test
+%
+% INPUT
+% a: data 1 (dataNum x 1)
+% b: data 2 (dataNum x 1)
+% sigLevel: significance level
+%   1 - 10[%]
+%   2 -  5[%]
+%   3 -  2[%]
+%   4 -  1[%]
+%   5 -  0.5[%]
+%   6 -  0.2[%]
+%   7 -  0.1[%]
+% OUTPUT
+% h: The result h is 1 if the test rejects the null hypothesis and 0 otherwise.
+% p: p-value
+%
+% NOTE
+% ttest2tail.csv is required.
+%
+% HISTORY
+% 2015/02/04
+%
+% AUTHOR
+% Aki Kunikoshi
+% yemaozi88@gmail.com
+%
+
+%% testdata
+% a = [90; 75; 75; 75; 80; 65; 75; 80];
+% b = [95; 80; 80; 80; 75; 75; 80; 85];
+% sigLevel = 4;
+
+assert(nargin == 3, ...
+ 'input arguments should be 3.')
+assert(size(a, 1) == size(b, 1), ...
+ 'input vectors should have the same size.')
+assert(size(a, 1) < 200, ...
+ 'the size of input vector should be < 200.')
+ 
+sampleNumMax = size(a, 1); % = size(b, 1)
+DoF = sampleNumMax - 1;
+
+diffMean = mean(a-b);
+diffStdError = sqrt(var(a-b)/sampleNumMax);    
+p = diffMean/diffStdError;
+
+% t distribution table
+% - downloaded from: https://www.easycalculation.com/statistics/t-distribution-critical-value-table.php
+%   1: DoF
+%   2: 10[%]
+%   3:  5[%]
+%   4:  2[%]
+%   5:  1[%]
+%   6:  0.5[%]
+%   7:  0.2[%]
+%   8:  0.1[%]
+tDistribution = csvread('ttest2tail.csv');
+tCriticalValue = tDistribution(DoF, sigLevel+1);
+if p > tCriticalValue || p < tCriticalValue % reject
+    h = 0; % reject -> there is a difference
+else
+    h = 1;
+end
