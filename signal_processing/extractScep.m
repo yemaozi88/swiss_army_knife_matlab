@@ -1,52 +1,49 @@
-function extractScep(fin, fout, DEG)
-% extractScep(fin, fout, deg)
+function extractScep(fileWav, fileScep, deg)
+% extractScep(fileWav, fileScep, deg)
 % extract cepstram coefficients using STRAIGHT
 %
 % INPUT
-% fin: original speech wav file recorded by 16000[Hz]
-% fout: output scep file
+% fileWav: original speech wav file recorded by 16000[Hz]
+% fileScep: output scep file
 % deg: the dimension of cepstrum using analysis
 %
 % LINKS
 % STRAIGHT.m, sgram2cep.m
 %
 % HISTORY
+% 2019/05/11 audioread is used instead of wavread.
 % 2009/10/02 functionized
 % 2009/09/23 change configuration of input & output filenames
 % 2008/03/01
 %
 % AUTHOR
-% Aki Kunikoshi (D2)
-% yemaozi88@gmail.com
+% Aki Kunikoshi
+% a.kunikoshi@gmail.com
 %
 
 
 %% load wav file
 % x: waveform
 % fs: sampling frequency
-[x, fs] = wavread(fin);
+[x, fs] = audioread(fileWav);
 
 
 %% previous method
 % f0raw: fundamental frequency
-% ap:18
+% ap: 18
 % n3gram: STRAIGHT spectrogram (513 x frame)
-[f0raw, ap, prmF0] = exstraightsource(x, fs);
-[n3sgram, prmP] = exstraightspec(x, f0raw, fs);
+[f0raw, ~, ~] = exstraightsource(x, fs);
+[n3sgram, ~] = exstraightspec(x, f0raw, fs);
 
 
 %% extract scep
-scep = sgram2cep(n3sgram, DEG);
+scep = sgram2cep(n3sgram, deg);
 
 
-%% write to scep file
-fod = fopen(fout, 'wb');
-%frame = length(scep(1, :));
+%% output to scep file
+fscep = fopen(fileScep, 'wb');
 frame = size(scep, 2);
-%j = 1;
-%while j < frame + 1
 for ii = 1:frame
-    fwrite(fod, scep(:, ii), 'float');
-    %j = j + 1;
+    fwrite(fscep, scep(:, ii), 'float');
 end
-fclose(fod);
+fclose(fscep);

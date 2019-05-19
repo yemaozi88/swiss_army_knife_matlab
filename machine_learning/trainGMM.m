@@ -20,8 +20,8 @@ function obj = trainGMM(X, gNum, mode)
 % 2010/11/25 functionized
 %
 % AUTHOR
-% Aki Kunikoshi (D2)
-% yemaozi88@gmail.com
+% Aki Kunikoshi
+% a.kunikoshi@gmail.com
 %
 
 
